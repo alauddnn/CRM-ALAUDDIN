@@ -1,0 +1,6 @@
+{
+  "name": "Sinergi CRM",
+  "description": "Platform terpadu pencatatan Lead, konversi Surat Perintah Kerja (SPK), riwayat log status, serta integrasi verifikasi keuangan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

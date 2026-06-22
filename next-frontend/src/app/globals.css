@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Light, neutral background with indigo accent */
+  --background: #ffffff; /* white background for dashboard */
+  --foreground: #0f172a; /* slate-900 */
+  --card-bg: #ffffff;
+  --accent: #4f46e5; /* indigo-600 */
+  --muted: #6b7280; /* slate-500 */
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Helper classes mapped to CSS variables for small tweaks */
+.bg-card { background-color: var(--card-bg); }
+.text-accent { color: var(--accent); }
+.bg-accent { background-color: var(--accent); }
+.text-muted { color: var(--muted); }

@@ -1,0 +1,109 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  SALES
+  FINANCE
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  NEGOTIATION
+  WON
+  LOST
+}
+
+enum SpkStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  name         String
+  password     String        // Hashed password for standard authentication
+  role         Role          @default(SALES)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  
+  // Relations
+  leads        Lead[]        @relation("SalesLeads")
+  createdSpks  Spk[]         @relation("CreatedSpks")
+  approvedSpks Spk[]         @relation("ApprovedSpks")
+  activityLogs ActivityLog[]
+
+  @@map("users")
+}
+
+model Lead {
+  id             String     @id @default(uuid())
+  companyName    String     @map("company_name")
+  contactName    String     @map("contact_name")
+  phone          String
+  email          String
+  source         String
+  estimatedValue Decimal    @map("estimated_value") @db.Decimal(15, 2)
+  status         LeadStatus @default(NEW)
+  notes          String     @db.Text
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+
+  // Relations
+  salesId        String     @map("sales_id")
+  sales          User       @relation("SalesLeads", fields: [salesId], references: [id], onDelete: Cascade)
+  spks           Spk[]
+
+  @@map("leads")
+}
+
+model Spk {
+  id          String    @id @default(uuid())
+  spkNumber   String    @unique @map("spk_number")
+  title       String
+  description String    @db.Text
+  value       Decimal   @db.Decimal(15, 2)
+  status      SpkStatus @default(PENDING)
+  financeNotes String?  @map("finance_notes") @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  leadId      String    @map("lead_id")
+  lead        Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  
+  createdById String    @map("created_by_id")
+  createdBy   User      @relation("CreatedSpks", fields: [createdById], references: [id])
+  
+  approvedById String?  @map("approved_by_id")
+  approvedBy   User?    @relation("ApprovedSpks", fields: [approvedById], references: [id])
+
+  @@map("spks")
+  @@unique([leadId])
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  details     String
+  action      String
+  previousStatus String? @map("previous_status")
+  newStatus   String?   @map("new_status")
+  note        String?   @db.Text
+  timestamp   DateTime  @default(now())
+
+  // Relations
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("activity_logs")
+}
