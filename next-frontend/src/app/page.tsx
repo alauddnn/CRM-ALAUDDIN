@@ -580,7 +580,7 @@ export default function NextFrontendCrmPage() {
             const mappedLogs = logsArray.map((l: any, idx: number) => ({
               id: l.id || `log-${idx}`,
               entityType: l.action?.toLowerCase().includes('spk') ? 'spk' : 'lead',
-              entityId: null,
+              entityId: l.entityId ? String(l.entityId) : '',
               previousStatus: l.previousStatus || '',
               newStatus: l.newStatus || '',
               userId: l.userId || (l.user && l.user.email) || 'system',
